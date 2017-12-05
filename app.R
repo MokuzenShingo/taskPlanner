@@ -27,7 +27,7 @@ sidebar <- dashboardSidebar(
     menuItem("Utility", tabName = "utility", icon = icon("wrench")),
     menuItem("How to", tabName = "howto", icon = icon("file")),
     menuItem("Source code", icon = icon("file-code-o"), 
-             href = "https://github.com/rstudio/shinydashboard/")
+             href = "https://github.com/MokuzenShingo/taskPlanner/")
   )
 )
 
