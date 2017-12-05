@@ -11,6 +11,7 @@ library(xts)
 library(rpart)
 library(plotly)
 library(stringr)
+library(markdown)
 ##############################################################
 #  UI
 ##############################################################
@@ -153,6 +154,7 @@ server <- function(input, output, session) {
   
   output$dashboard_taskPoint <- renderValueBox({
     dat <- value$taskTable_day[which(!is.na(value$taskTable_day$ID)),]
+    dat <- rbind(dat[which(dat$actualTime != 0), ],dat[which(is.na(dat$actualTime)), ])
     dat.comp <- dat[which(dat$actualTime > 0),]
     
     taskPoint_sum <- sum(apply(dat, 1, function(x) as.integer(x["importance"]) * as.integer(x["urgency"])))
@@ -164,6 +166,7 @@ server <- function(input, output, session) {
   })
   output$dashboard_taskDiges <- renderValueBox({
     dat <- value$taskTable_day[which(!is.na(value$taskTable_day$ID)),]
+    dat <- rbind(dat[which(dat$actualTime != 0), ],dat[which(is.na(dat$actualTime)), ])
     dat.comp <- dat[which(dat$actualTime > 0),]
     
     valueBox(paste0(round(100 * nrow(dat.comp) / nrow(dat) - sum(dat$actualTime == 0, na.rm = T),0), " %"), 
@@ -172,6 +175,7 @@ server <- function(input, output, session) {
   })
   output$dashboard_taskTimes <- renderValueBox({
     dat <- value$taskTable_day[which(!is.na(value$taskTable_day$ID)),]
+    dat <- rbind(dat[which(dat$actualTime != 0), ],dat[which(is.na(dat$actualTime)), ])
     
     actualTime_sum <- sum(as.numeric(dat$actualTime), na.rm = T)
     planTime_sum <- sum(as.numeric(dat$planTime), na.rm = T)
@@ -288,11 +292,12 @@ server <- function(input, output, session) {
     taskTable$actualTime <- as.numeric(taskTable$actualTime)
     taskTable
   }
+  
   daily.summary <- function(taskTable){
-    taskTable$taskComp <- ifelse(is.na(taskTable$actualTime), 0, 1)
+        taskTable$taskComp <- ifelse(is.na(taskTable$actualTime), 0, 1)
     taskTable$planPoint <- taskTable$importance * taskTable$urgency
     taskTable$actuPoint <- taskTable$importance * taskTable$urgency * taskTable$taskComp
-    
+    taskTable <- rbind(taskTable[which(taskTable$actualTime != 0), ],taskTable[which(is.na(taskTable$actualTime)), ])
     taskTable.daily <- group_by(taskTable, date)
     dplyr::summarise(taskTable.daily,
                      planTime = sum(planTime),
