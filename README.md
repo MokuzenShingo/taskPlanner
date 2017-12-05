@@ -41,6 +41,7 @@ https://www.r-project.org
 https://www.rstudio.com
 
 ### ファイルのダウンロード
+https://github.com/MokuzenShingo/taskPlanner/archive/master.zip
 
 ### 必要パッケージのインストール
 
